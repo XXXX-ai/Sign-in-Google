@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -47,5 +48,7 @@ def receive_data():
     return jsonify({"status": "no data"}), 400
 
 if __name__ == '__main__':
-    init_db() # Initialisation au démarrage
-    app.run()
+    init_db()
+    # Render définit automatiquement une variable d'environnement PORT
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
